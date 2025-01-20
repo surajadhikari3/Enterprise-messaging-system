@@ -1,4 +1,4 @@
-package io.reactivestax.EMSRestApi.controller.ems;
+package io.reactivestax.EMSRestApi.controller.ems.otp;
 
 import io.reactivestax.EMSRestApi.dto.ems.EmailDTO;
 import io.reactivestax.EMSRestApi.service.ems.EmailService;
@@ -11,9 +11,8 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/ems/email")
-public class EmailController {
-
+@RequestMapping("/api/v1/otp/email")
+public class OtpEmailController {
     @Autowired
     private EmailService emailService;
 

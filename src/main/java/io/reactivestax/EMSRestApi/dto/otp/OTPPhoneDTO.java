@@ -1,13 +1,13 @@
-package io.reactivestax.EMSRestApi.dto;
+package io.reactivestax.EMSRestApi.dto.otp;
 
 import jakarta.persistence.Entity;
 import lombok.Data;
 
 @Entity
 @Data
-public class SmsDTO {
+public class OTPPhoneDTO {
+
     private Long id;
     private Long clientId;
     private String phone;
-    private String message;
 }

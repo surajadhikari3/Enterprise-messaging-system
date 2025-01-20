@@ -1,5 +1,6 @@
-package io.reactivestax.EMSRestApi.domain;
+package io.reactivestax.EMSRestApi.domain.otp;
 
+import io.reactivestax.EMSRestApi.domain.ems.Client;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -8,12 +9,10 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Sms {
+public class OTPSms {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Client client;
     private String phone;
-    private String message;
-
 }

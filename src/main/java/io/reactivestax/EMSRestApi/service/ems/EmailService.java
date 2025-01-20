@@ -1,12 +1,10 @@
-package io.reactivestax.EMSRestApi.service;
+package io.reactivestax.EMSRestApi.service.ems;
 
-import io.reactivestax.EMSRestApi.domain.Client;
-import io.reactivestax.EMSRestApi.domain.Email;
-import io.reactivestax.EMSRestApi.dto.EmailDTO;
-import io.reactivestax.EMSRestApi.dto.SmsDTO;
-import io.reactivestax.EMSRestApi.repository.ClientRepository;
-import io.reactivestax.EMSRestApi.repository.EmailRepository;
-import io.reactivestax.EMSRestApi.repository.SmsRepository;
+import io.reactivestax.EMSRestApi.domain.ems.Client;
+import io.reactivestax.EMSRestApi.domain.ems.Email;
+import io.reactivestax.EMSRestApi.dto.ems.EmailDTO;
+import io.reactivestax.EMSRestApi.repository.ems.ClientRepository;
+import io.reactivestax.EMSRestApi.repository.ems.EmailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

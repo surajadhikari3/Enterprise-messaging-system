@@ -1,4 +1,4 @@
-package io.reactivestax.EMSRestApi.domain;
+package io.reactivestax.EMSRestApi.domain.ems;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;

@@ -1,11 +1,13 @@
-package io.reactivestax.EMSRestApi.domain;
+package io.reactivestax.EMSRestApi.domain.ems;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import io.reactivestax.EMSRestApi.dto.ContactDTO;
-import io.reactivestax.EMSRestApi.dto.OtpDTO;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import io.reactivestax.EMSRestApi.dto.ems.ContactDTO;
+import io.reactivestax.EMSRestApi.dto.ems.OtpDTO;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +23,14 @@ public class Client {
     private String lastName;
     private String dateOfBirth;
     private String address;
+
     @OneToMany(mappedBy = "contact_id")
     @JsonBackReference
     private List<ContactDTO> contactDTOS = new ArrayList<>();
-    private OtpDTO otpDTO;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "otp_id", referencedColumnName = "id")
+    @JsonManagedReference
+    @ToString.Exclude
+    private Otp otp;
 }

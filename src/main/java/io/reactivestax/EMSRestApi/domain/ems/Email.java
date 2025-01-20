@@ -1,4 +1,4 @@
-package io.reactivestax.EMSRestApi.domain;
+package io.reactivestax.EMSRestApi.domain.ems;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

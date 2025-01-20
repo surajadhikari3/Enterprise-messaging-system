@@ -1,4 +1,4 @@
-package io.reactivestax.EMSRestApi.dto;
+package io.reactivestax.EMSRestApi.dto.ems;
 
 import lombok.Builder;
 import lombok.Data;

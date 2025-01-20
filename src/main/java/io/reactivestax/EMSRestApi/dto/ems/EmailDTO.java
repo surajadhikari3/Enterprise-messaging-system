@@ -1,4 +1,4 @@
-package io.reactivestax.EMSRestApi.dto;
+package io.reactivestax.EMSRestApi.dto.ems;
 
 import jakarta.persistence.Entity;
 import lombok.Data;

@@ -1,7 +1,7 @@
 package io.reactivestax.EMSRestApi.controller.ems;
 
-import io.reactivestax.EMSRestApi.dto.SmsDTO;
-import io.reactivestax.EMSRestApi.service.SmsService;
+import io.reactivestax.EMSRestApi.dto.ems.SmsDTO;
+import io.reactivestax.EMSRestApi.service.ems.SmsService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ public class SmsController {
     private SmsService smsService;
 
     @GetMapping
-    public ResponseEntity<List<SmsDTO>> getAllSmss() {
+    public ResponseEntity<List<SmsDTO>> getAllSms() {
         return ResponseEntity.ok(smsService.findAll());
     }
 
@@ -32,9 +32,7 @@ public class SmsController {
         Optional<SmsDTO> sms = smsService.findById(id);
         if (sms.isPresent()) {
             SmsDTO updatedSms = sms.get();
-            updatedSms.setTo(smsDTO.getTo());
-            updatedSms.setBody(smsDTO.getBody());
-            updatedSms.setSubject(smsDTO.getSubject());
+            updatedSms.setPhone(smsDTO.getPhone());
             updatedSms.setClientId(smsDTO.getClientId());
             return ResponseEntity.ok(smsService.save(updatedSms));
         } else {
