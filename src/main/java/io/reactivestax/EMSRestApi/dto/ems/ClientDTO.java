@@ -13,5 +13,7 @@ public class ClientDTO {
     private String lastName;
     private String dateOfBirth;
     private String address;
+    private Boolean isLocked;
     private List<Long> contactId;
+    private Long otpId;
 }

@@ -23,6 +23,7 @@ public class Client {
     private String lastName;
     private String dateOfBirth;
     private String address;
+    private Boolean isLocked;
 
     @OneToMany(mappedBy = "contact")
     @JsonBackReference

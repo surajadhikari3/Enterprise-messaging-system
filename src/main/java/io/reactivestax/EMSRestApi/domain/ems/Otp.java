@@ -1,14 +1,12 @@
 package io.reactivestax.EMSRestApi.domain.ems;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import io.reactivestax.EMSRestApi.dto.ems.ClientDTO;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
-import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -19,13 +17,15 @@ public class Otp {
     private Long otpId;
     private Integer otpAttempts;
     private String validOtp;
-    private Date createdAt;
-    private Date lastAccessed;
-    private Integer generationCount;
-    private Integer validationCount;
-    private boolean isValid;
+    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime lastAccessed;
+    private Integer generationRetryCount = 0;
+    private Integer validationRetryCount = 0;
+    private Boolean isValid;
+    private String phone;
+    private String email;
 
-    @OneToOne(mappedBy = "otp")
+    @OneToOne(mappedBy = "otp", cascade = CascadeType.ALL)
     @JsonBackReference
     @ToString.Exclude
     private Client client;
