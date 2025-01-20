@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Data
 @Builder
-public class Otp {
+public class OtpDTO {
     private Long otpId;
     private Integer otpAttempts;
     private Date createdAt;

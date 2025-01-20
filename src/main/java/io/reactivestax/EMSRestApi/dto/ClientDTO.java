@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class Client {
+public class ClientDTO {
     private Long clientId;
     private String firstName;
     private String lastName;

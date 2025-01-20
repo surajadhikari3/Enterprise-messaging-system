@@ -1,11 +1,9 @@
 package io.reactivestax.EMSRestApi.service;
 
 import io.reactivestax.EMSRestApi.domain.Client;
-import io.reactivestax.EMSRestApi.domain.Email;
-import io.reactivestax.EMSRestApi.dto.EmailDTO;
+import io.reactivestax.EMSRestApi.domain.Sms;
 import io.reactivestax.EMSRestApi.dto.SmsDTO;
 import io.reactivestax.EMSRestApi.repository.ClientRepository;
-import io.reactivestax.EMSRestApi.repository.EmailRepository;
 import io.reactivestax.EMSRestApi.repository.SmsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,51 +14,49 @@ import java.util.stream.Collectors;
 
 
 @Service
-public class EmailService {
+public class SmsService {
 
     @Autowired
-    private EmailRepository emailRepository;
+    private SmsRepository smsRepository;
 
     @Autowired
     private ClientRepository clientRepository;
 
-    public List<EmailDTO> findAll(){
-        return emailRepository.findAll().stream().map(this::convertToEmailDTO).collect(Collectors.toList());
+    public List<SmsDTO> findAll(){
+        return smsRepository.findAll().stream().map(this::convertToSmsDTO).collect(Collectors.toList());
     }
 
-    public EmailDTO save(EmailDTO emailDTO){
-        Email email = converToEmail(emailDTO);
-        return convertToEmailDTO(emailRepository.save(email));
+    public SmsDTO save(SmsDTO smsDTO){
+        Sms sms = converToSms(smsDTO);
+        return convertToSmsDTO(smsRepository.save(sms));
     }
-
-
-    public Optional<EmailDTO> findById(Long id){
-        return emailRepository.findById(id).map(this::convertToEmailDTO);
+    
+    
+    public Optional<SmsDTO> findById(Long id){
+        return smsRepository.findById(id).map(this::convertToSmsDTO);
     }
-
+    
     public void deleteById(Long id){
-         emailRepository.deleteById(id);
+         smsRepository.deleteById(id);
+    }
+    
+
+    private SmsDTO convertToSmsDTO(Sms sms){
+        SmsDTO smsDTO = new SmsDTO();
+        smsDTO.setId(sms.getId());
+        smsDTO.setPhone(sms.getPhone());
+        smsDTO.setMessage(smsDTO.getPhone());
+        smsDTO.setClientId(sms.getClient().getClientId());
+        return smsDTO;
     }
 
-
-    private EmailDTO convertToEmailDTO(Email email){
-        EmailDTO emailDTO = new EmailDTO();
-        emailDTO.setId(email.getId());
-        emailDTO.setTo(email.getTo());
-        emailDTO.setSubject(email.getSubject());
-        emailDTO.setBody(email.getBody());
-        emailDTO.setClientId(email.getClient().getClientId());
-        return emailDTO;
-    }
-
-    private Email converToEmail(EmailDTO emailDTO){
-        Email email = new Email();
-        email.setId(emailDTO.getId());
-        email.setTo(emailDTO.getTo());
-        email.setSubject(emailDTO.getSubject());
-        email.setBody(emailDTO.getBody());
-        email.setClient(fetchClientById(emailDTO.getClientId()));
-        return email;
+    private Sms converToSms(SmsDTO smsDTO){
+        Sms sms = new Sms();
+        sms.setId(smsDTO.getId());
+        sms.setPhone(smsDTO.getPhone());
+        sms.setMessage(smsDTO.getMessage());
+        sms.setClient(fetchClientById(smsDTO.getClientId()));
+        return sms;
     }
 
 

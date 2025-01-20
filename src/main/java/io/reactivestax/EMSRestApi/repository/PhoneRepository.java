@@ -1,7 +1,7 @@
 package io.reactivestax.EMSRestApi.repository;
 
-import io.reactivestax.EMSRestApi.domain.Sms;
+import io.reactivestax.EMSRestApi.domain.Phone;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface SmsRepository extends JpaRepository<Sms, Long> {
+public interface PhoneRepository extends JpaRepository<Phone, Long> {
 }

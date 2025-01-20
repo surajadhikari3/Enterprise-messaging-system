@@ -1,4 +1,8 @@
 package io.reactivestax.EMSRestApi.repository;
 
-public class ClientRepository {
+import io.reactivestax.EMSRestApi.domain.Client;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ClientRepository extends JpaRepository<Client, Long> {
+
 }

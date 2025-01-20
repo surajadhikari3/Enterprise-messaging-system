@@ -8,13 +8,12 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Email {
+public class Sms {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long clientId;
-    private String to;
-    private String subject;
-    private String body;
+    private Client client;
+    private String phone;
+    private String message;
 
 }

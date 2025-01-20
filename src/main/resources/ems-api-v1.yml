@@ -157,12 +157,12 @@ paths:
     put:
       summary: Verify OTP status
       parameters:
-        - name: clientID
+        - name: clientId
           in: query
           required: true
           schema:
             type: string
-          example: "+123e4567-e89b-42d3-a456-556642440000"
+          example: "123e4567-e89b-42d3-a456-556642440000"
       responses:
         200:
           description: OTP verified successfully
@@ -173,14 +173,14 @@ paths:
     get:
       summary: Get OTP status
       parameters:
-        - name: phone
+        - name: clientId
           in: query
           required: true
           schema:
             type: string
-          example: "+1234567890"
+          example: "123e4567-e89b-42d3-a456-556642440000"
       responses:
         200:
-          description: OTP status retrieved successfully
+          description: OTP is valid
         404:
-          description: OTP not found
+          description: OTP is not valid

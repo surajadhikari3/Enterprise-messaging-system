@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Phone {
+public class PhoneDTO {
     private Long id;
     private Long clientId;
     private String outgoingPhoneNumber;
