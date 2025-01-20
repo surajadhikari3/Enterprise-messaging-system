@@ -9,5 +9,5 @@ public class ContactDTO {
     private long contactId;
     private String email;
     private String phone;
-    private String customer;
+    private Long clientId;
 }

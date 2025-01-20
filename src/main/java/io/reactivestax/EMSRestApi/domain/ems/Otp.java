@@ -15,7 +15,6 @@ public class Otp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long otpId;
-    private Integer otpAttempts;
     private String validOtp;
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime lastAccessed;

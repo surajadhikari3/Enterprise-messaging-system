@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Builder
 public class OtpDTO {
     private Long otpId;
-    private Integer otpAttempts;
     private String validOtp;
     private LocalDateTime createdAt;
     private LocalDateTime lastAccessed;
@@ -20,7 +19,7 @@ public class OtpDTO {
     private Integer generationRetryCount;
     @Max(value = 3, message = "Max attempt for OTP validation is 3")
     private Integer validationRetryCount;
-    private boolean isValid;
+    private Boolean isValid;
     private String phone;
     @Email(message = "Email must be valid email")
     private String email;

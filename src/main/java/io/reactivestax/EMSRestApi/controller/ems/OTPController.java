@@ -1,7 +1,9 @@
 package io.reactivestax.EMSRestApi.controller.ems;
 
 import io.reactivestax.EMSRestApi.dto.ems.EmailDTO;
+import io.reactivestax.EMSRestApi.dto.ems.OtpDTO;
 import io.reactivestax.EMSRestApi.service.ems.EmailService;
+import io.reactivestax.EMSRestApi.service.otp.OTPService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +19,17 @@ public class OTPController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private OTPService otpService;
+
     @GetMapping
     public ResponseEntity<List<EmailDTO>> getAllEmails() {
         return ResponseEntity.ok(emailService.findAll());
     }
 
     @PostMapping
-    public ResponseEntity<EmailDTO> createEmail(@Valid @RequestBody EmailDTO emailDTO) {
-        return ResponseEntity.ok(emailService.save(emailDTO));
+    public ResponseEntity<OtpDTO> createEmail(@Valid @RequestBody OtpDTO otpDTO) {
+        return ResponseEntity.ok(otpService.save(otpDTO));
     }
 
     @PutMapping("/{id}")
