@@ -24,9 +24,10 @@ public class Client {
     private String dateOfBirth;
     private String address;
 
-    @OneToMany(mappedBy = "contact_id")
+    @OneToMany(mappedBy = "contact")
     @JsonBackReference
-    private List<ContactDTO> contactDTOS = new ArrayList<>();
+    @ToString.Exclude
+    private List<Contact> contact = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "otp_id", referencedColumnName = "id")

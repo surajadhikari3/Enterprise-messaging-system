@@ -14,8 +14,9 @@ public class Contact {
     private long contactId;
     private String email;
     private String phone;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "contact_id")
     @JsonManagedReference
-    private String customer;
+    private Client client;
 }

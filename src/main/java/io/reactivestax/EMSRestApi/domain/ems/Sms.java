@@ -15,5 +15,4 @@ public class Sms {
     private Client client;
     private String phone;
     private String message;
-
 }
