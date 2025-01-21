@@ -74,8 +74,6 @@ public class ClientService {
                 .otp(fetchOtpById(clientDTO.getOtpId()))
                 .isLocked(clientDTO.getIsLocked())
                 .build();
-
-
     }
 
 
