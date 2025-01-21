@@ -43,7 +43,17 @@ public class OTPService {
 //        otpDTO.setOtpAttempts(otpDTO.getOtpAttempts() + 1);
         return true;
     }
-    public OtpDTO save(OtpDTO otpDTO) {
+    public OtpDTO createOtpForEmail(OtpDTO otpDTO) {
+        Otp otp = converToOtp(otpDTO);
+        return convertToOtpDTO(otpRepository.save(otp));
+    }
+
+    public OtpDTO createOtpForSms(OtpDTO otpDTO) {
+        Otp otp = converToOtp(otpDTO);
+        return convertToOtpDTO(otpRepository.save(otp));
+    }
+
+    public OtpDTO createOtpForPhone(OtpDTO otpDTO) {
         Otp otp = converToOtp(otpDTO);
         return convertToOtpDTO(otpRepository.save(otp));
     }
@@ -59,7 +69,7 @@ public class OTPService {
                 .isValid(otp.getIsValid())
                 .phone(otp.getPhone())
                 .email(otp.getEmail())
-//                .clientId(otp.getClient().getId())
+                .clientId(otp.getClient().getId())
                 .build();
     }
 

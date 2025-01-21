@@ -6,7 +6,7 @@ spring:
     user: admin
     password: admin
   datasource:
-    url: jdbc:postgresql://localhost:5432/ems_db
+    url: jdbc:postgresql://localhost:5432/mydatabase
     username: postgres
     password: postgres
   jpa:
