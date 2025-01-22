@@ -3,7 +3,7 @@ package io.reactivestax.EMSRestApi.controller;
 import io.reactivestax.EMSRestApi.dto.EmailDTO;
 import io.reactivestax.EMSRestApi.dto.PhoneDTO;
 import io.reactivestax.EMSRestApi.dto.SmsDTO;
-import io.reactivestax.EMSRestApi.messageBroker.ArtemisProducer;
+import io.reactivestax.EMSRestApi.message_broker.ArtemisProducer;
 import io.reactivestax.EMSRestApi.service.EmsService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

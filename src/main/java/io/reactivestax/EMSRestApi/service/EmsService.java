@@ -38,7 +38,7 @@ public class EmsService {
 
     public EmailDTO saveEmail(EmailDTO emailDTO){
         if(!otpService.statusForOTP(emailDTO.getClientId()).equals(Status.VALID)) {
-           throw  new InvalidOTPException("OTP is not valid");
+           throw  new InvalidOTPException("Not valid OTP");
         }
         Email email = converToEmail(emailDTO);
         return convertToEmailDTO(emailRepository.save(email));
@@ -59,8 +59,6 @@ public class EmsService {
         Sms sms = converToSms(smsDTO);
         return convertToSmsDTO(smsRepository.save(sms));
     }
-
-
 
     private EmailDTO convertToEmailDTO(Email email){
         EmailDTO emailDTO = new EmailDTO();

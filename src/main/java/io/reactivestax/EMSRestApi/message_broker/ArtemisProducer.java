@@ -1,6 +1,5 @@
-package io.reactivestax.EMSRestApi.messageBroker;
+package io.reactivestax.EMSRestApi.message_broker;
 
-import io.reactivestax.EMSRestApi.service.OTPService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;

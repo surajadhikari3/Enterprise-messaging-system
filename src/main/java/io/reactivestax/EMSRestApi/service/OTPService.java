@@ -8,7 +8,7 @@ import io.reactivestax.EMSRestApi.enums.Status;
 import io.reactivestax.EMSRestApi.exception.ExceededGenerationCountException;
 import io.reactivestax.EMSRestApi.exception.ExceededValidationCountException;
 import io.reactivestax.EMSRestApi.exception.InvalidOTPException;
-import io.reactivestax.EMSRestApi.messageBroker.ArtemisProducer;
+import io.reactivestax.EMSRestApi.message_broker.ArtemisProducer;
 import io.reactivestax.EMSRestApi.repository.ClientRepository;
 import io.reactivestax.EMSRestApi.repository.OTPRepository;
 import org.springframework.beans.factory.annotation.Autowired;
