@@ -11,5 +11,12 @@ spring:
     password: postgres
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
+twilio:
+  account:
+    sid: ACcaf712623dae0d86afce861d5f6cfcd6
+  auth:
+    token: 1c4db33d70c0cb1ebe691dedcffbd408
+  phone:
+    number: +17753638106

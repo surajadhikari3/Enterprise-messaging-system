@@ -3,6 +3,7 @@ package io.reactivestax.EMSRestApi.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
@@ -23,6 +24,6 @@ public class OtpDTO {
     private String phone;
     @Email(message = "Email must be valid email")
     private String email;
-    @NotBlank(message = "Client Id is needed")
+    @NotNull(message = "Client Id is needed")
     private Long clientId;
 }

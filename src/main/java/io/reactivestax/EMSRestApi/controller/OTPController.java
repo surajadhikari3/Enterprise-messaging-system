@@ -17,31 +17,26 @@ public class OTPController {
     @PostMapping("/sms")
     public ResponseEntity<OtpDTO> createOtpForSms(@Valid @RequestBody OtpDTO otpDTO) {
         return ResponseEntity.ok(otpService.createOtpForSms(otpDTO));
-        //and also publish to mq....
     }
 
     @PostMapping("/call")
     public ResponseEntity<OtpDTO> createOtpForCall(@Valid @RequestBody OtpDTO otpDTO) {
         return ResponseEntity.ok(otpService.createOtpForPhone(otpDTO));
-        //and also publish to mq....
     }
 
     @PostMapping("/email")
     public ResponseEntity<OtpDTO> createOtpForEmail(@Valid @RequestBody OtpDTO otpDTO) {
         return ResponseEntity.ok(otpService.createOtpForEmail(otpDTO));
-        //and also publish to mq....
     }
 
-//    @PostMapping("/verify")
-//    public ResponseEntity<EmailDTO> createOtpForSms(@Valid @RequestBody EmailDTO emailDTO) {
-//        return ResponseEntity.ok(otpService.saveEmail(emailDTO));
-//        //and also publish to mq....
-//    }
-//
-//    @PostMapping("/status")
-//    public ResponseEntity<EmailDTO> createOtpForSms(@Valid @RequestBody EmailDTO emailDTO) {
-//        return ResponseEntity.ok(otpService.saveEmail(emailDTO));
-//        //and also publish to mq....
-//    }
+    @PutMapping("/verify")
+    public ResponseEntity<OtpDTO> verifyOtp(@Valid @RequestBody OtpDTO otpDTO) {
+        return ResponseEntity.ok(otpService.verifyOtp(otpDTO));
+    }
+
+    @GetMapping("/status/{clientId}")
+    public ResponseEntity<OtpDTO> statusForOTP(@Valid @PathVariable Long clientId) {
+        return ResponseEntity.ok(otpService.statusForOTP(clientId));
+    }
 
 }

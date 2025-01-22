@@ -24,11 +24,13 @@ public class EmsController {
     @Autowired
     private ArtemisProducer artemisProducer;
 
+    String QUEUE_NAME = "ems-queue";
+
 
     @PostMapping("/email")
     public ResponseEntity<EmailDTO> createEmail(@Valid @RequestBody EmailDTO emailDTO) {
         EmailDTO savedDTO = emsService.saveEmail(emailDTO);
-        artemisProducer.sendMessage("ems-queue", savedDTO.getId().toString());
+        artemisProducer.sendMessage(QUEUE_NAME, savedDTO.getId().toString());
         return ResponseEntity.ok(savedDTO);
         //and also publish to mq....
     }
@@ -36,14 +38,14 @@ public class EmsController {
     @PostMapping("/sms")
     public ResponseEntity<SmsDTO> createSms(@Valid @RequestBody SmsDTO smsDTO) {
         SmsDTO savedDTO = emsService.saveSms(smsDTO);
-        artemisProducer.sendMessage("ems-queue", savedDTO.getId().toString());
+        artemisProducer.sendMessage(QUEUE_NAME, savedDTO.getId().toString());
         return ResponseEntity.ok(emsService.saveSms(smsDTO));
     }
 
     @PostMapping("/phone")
     public ResponseEntity<PhoneDTO> createPhone(@Valid @RequestBody PhoneDTO phoneDto) {
         PhoneDTO savedDTO = emsService.savePhone(phoneDto);
-        artemisProducer.sendMessage("ems-queue", savedDTO.getId().toString());
+        artemisProducer.sendMessage(QUEUE_NAME, savedDTO.getId().toString());
         return ResponseEntity.ok(emsService.savePhone(phoneDto));
     }
 }
