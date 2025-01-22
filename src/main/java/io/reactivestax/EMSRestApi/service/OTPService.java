@@ -4,11 +4,13 @@ package io.reactivestax.EMSRestApi.service;
 import io.reactivestax.EMSRestApi.domain.Client;
 import io.reactivestax.EMSRestApi.domain.Otp;
 import io.reactivestax.EMSRestApi.dto.OtpDTO;
-import io.reactivestax.EMSRestApi.exception.ExceededGenerationCountError;
-import io.reactivestax.EMSRestApi.exception.ExceededValidationCountError;
+import io.reactivestax.EMSRestApi.exception.ExceededGenerationCountException;
+import io.reactivestax.EMSRestApi.exception.ExceededValidationCountException;
+import io.reactivestax.EMSRestApi.exception.InvalidOTPException;
 import io.reactivestax.EMSRestApi.repository.ClientRepository;
 import io.reactivestax.EMSRestApi.repository.OTPRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,10 +30,17 @@ public class OTPService {
     private ClientService clientService;
 
 
-    private static final int MAX_OTP_GENERATION_ATTEMPTS = 5;
-    private static final int MAX_VERIFICATION_ATTEMPTS = 3;
-    private static final int OTP_BLOCK_TIME_HOURS = 8; // Block user for 8 hours if max OTP generations are reached
-    private static final int VERIFICATION_BLOCK_TIME_HOURS = 2; //Block the user for 2 hours
+    @Value("${otp.max-otp-generation-attempts}")
+    private int maxOtpGenerationAttempts;
+
+    @Value("${otp.max-verification-attempts}")
+    private  int maxVerificationAttempts;
+
+    @Value("${otp.block-time-hours}")
+    private  int otpBlockTimeHours;
+
+    @Value("${otp.verification-block-time-hours}")
+    private  int verificationBlockTimeHours; //Block the user for 2 hours
 
 
 //    public boolean isValid(OtpDTO otpDTO) {
@@ -54,20 +63,8 @@ public class OTPService {
     /// /        otpDTO.setOtpAttempts(otpDTO.getOtpAttempts() + 1);
 //        return true;
 //    }
-//    public OtpDTO createOtpForEmail(OtpDTO otpDTO) {
-//        Otp otp = converToOtp(otpDTO);
-//        return convertToOtpDTO(otpRepository.save(otp));
-//    }
-//
-//    public OtpDTO createOtpForSms(OtpDTO otpDTO) {
-//        Otp otp = converToOtp(otpDTO);
-//        return convertToOtpDTO(otpRepository.save(otp));
-//    }
-//
-//    public OtpDTO createOtpForPhone(OtpDTO otpDTO) {
-//        Otp otp = converToOtp(otpDTO);
-//        return convertToOtpDTO(otpRepository.save(otp));
-//    }
+
+
     private OtpDTO convertToOtpDTO(Otp otp) {
         return OtpDTO
                 .builder()
@@ -82,27 +79,6 @@ public class OTPService {
                 .clientId(otp.getClient() != null ? otp.getClient().getId() : null)
                 .build();
     }
-
-    private Otp converToOtp(OtpDTO otpDTO) {
-        return Otp
-                .builder()
-                .id(otpDTO.getOtpId())
-                .validOtp(otpDTO.getValidOtp())
-                .createdAt(otpDTO.getCreatedAt())
-                .lastAccessed(otpDTO.getLastAccessed())
-                .validationRetryCount(otpDTO.getValidationRetryCount())
-                .isValid(otpDTO.getIsValid())
-                .phone(otpDTO.getPhone())
-                .email(otpDTO.getEmail())
-                .client(fetchClientById(otpDTO.getClientId()))
-                .build();
-    }
-
-    private Client fetchClientById(Long clientId) {
-        return clientRepository.findById(clientId)
-                .orElseThrow(() -> new RuntimeException("Client not found"));
-    }
-
 
     public OtpDTO createOtpForSms(OtpDTO otpDTO) {
         return createOtp(otpDTO, "sms");
@@ -121,15 +97,15 @@ public class OTPService {
 
         // Check if the client is locked
         if (client.getIsLocked() != null && client.getIsLocked()) {
-            throw new RuntimeException("Client is locked due to multiple OTP generation attempts.");
+            throw new ExceededGenerationCountException("Client is locked due to multiple OTP generation attempts.");
         }
 
         Otp otp = client.getOtp();
 
-        // Check OTP generation attempts limit
-        if (otp != null && otp.getGenerationRetryCount() >= MAX_OTP_GENERATION_ATTEMPTS) {
-            if (otp.getCreatedAt().plusHours(OTP_BLOCK_TIME_HOURS).isAfter(LocalDateTime.now())) {
-                throw new RuntimeException("Max OTP generation attempts reached. Try again later.");
+        // Checking  OTP generation attempts limit
+        if (otp != null && otp.getGenerationRetryCount() >= maxOtpGenerationAttempts) {
+            if (otp.getCreatedAt().plusHours(otpBlockTimeHours).isAfter(LocalDateTime.now())) {
+                throw new ExceededGenerationCountException("Max OTP generation attempts reached. Try again later.");
             } else {
                 otp.setGenerationRetryCount(0);  // Reset the counter after 8 hours
             }
@@ -167,11 +143,11 @@ public class OTPService {
                 otpRepository.save(otp);
             }
 
-            if (otp != null && otp.getValidationRetryCount() >= MAX_VERIFICATION_ATTEMPTS) {
+            if (otp != null && otp.getValidationRetryCount() >= maxVerificationAttempts) {
                 handleVerificationBlocking(client);
             }
 
-            throw new RuntimeException("Invalid OTP");
+            throw new InvalidOTPException("Invalid OTP");
         }
 
         // Reset validation retry count if OTP is valid
@@ -182,10 +158,10 @@ public class OTPService {
     }
 
     private void handleVerificationBlocking(Client client) {
-        // Add logic for sliding window blocking.
+        //pending to add sliding window logic as per discussion in class....
         LocalDateTime lastAccessed = client.getOtp().getLastAccessed();
-        if (lastAccessed != null && ChronoUnit.HOURS.between(lastAccessed, LocalDateTime.now()) < VERIFICATION_BLOCK_TIME_HOURS) {
-            throw new RuntimeException("Client is blocked for verification due to multiple failed attempts.");
+        if (lastAccessed != null && ChronoUnit.HOURS.between(lastAccessed, LocalDateTime.now()) < verificationBlockTimeHours) {
+            throw new ExceededValidationCountException("Client is blocked for verification due to multiple failed attempts.");
         }
 
         // Lock the client for sliding window
@@ -201,8 +177,6 @@ public class OTPService {
     }
 
     private String generateRandomOtp() {
-        return String.format("%06d", ThreadLocalRandom.current().nextInt(0, 1000000)); //generating the 6 digit otp......
+        return String.valueOf(ThreadLocalRandom.current().nextInt(0, 1000000)); //generating the 6 digit otp......
     }
-
-
 }

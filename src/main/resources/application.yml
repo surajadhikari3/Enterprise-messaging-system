@@ -13,3 +13,8 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+otp:
+  max-otp-generation-attempts: 5
+  max-verification-attempts: 3
+  block-time-hours: 8
+  verification-block-time-hours: 2
