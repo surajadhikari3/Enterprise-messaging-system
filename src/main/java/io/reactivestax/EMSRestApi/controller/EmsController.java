@@ -30,22 +30,21 @@ public class EmsController {
     @PostMapping("/email")
     public ResponseEntity<EmailDTO> createEmail(@Valid @RequestBody EmailDTO emailDTO) {
         EmailDTO savedDTO = emsService.saveEmail(emailDTO);
-        artemisProducer.sendMessage(QUEUE_NAME, savedDTO.getId().toString());
+        artemisProducer.sendMessage(QUEUE_NAME, savedDTO.getId().toString(), "email");
         return ResponseEntity.ok(savedDTO);
-        //and also publish to mq....
     }
 
     @PostMapping("/sms")
     public ResponseEntity<SmsDTO> createSms(@Valid @RequestBody SmsDTO smsDTO) {
         SmsDTO savedDTO = emsService.saveSms(smsDTO);
-        artemisProducer.sendMessage(QUEUE_NAME, savedDTO.getId().toString());
+        artemisProducer.sendMessage(QUEUE_NAME, savedDTO.getId().toString(), "sms");
         return ResponseEntity.ok(emsService.saveSms(smsDTO));
     }
 
     @PostMapping("/phone")
     public ResponseEntity<PhoneDTO> createPhone(@Valid @RequestBody PhoneDTO phoneDto) {
         PhoneDTO savedDTO = emsService.savePhone(phoneDto);
-        artemisProducer.sendMessage(QUEUE_NAME, savedDTO.getId().toString());
+        artemisProducer.sendMessage(QUEUE_NAME, savedDTO.getId().toString(), "phone");
         return ResponseEntity.ok(emsService.savePhone(phoneDto));
     }
 }
