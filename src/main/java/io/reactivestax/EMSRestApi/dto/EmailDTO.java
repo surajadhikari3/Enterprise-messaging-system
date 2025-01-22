@@ -6,7 +6,7 @@ import lombok.Data;
 public class EmailDTO {
     private Long id;
     private Long clientId;
-    private String to;
+    private String receiverEmailId;
     private String subject;
     private String body;
 

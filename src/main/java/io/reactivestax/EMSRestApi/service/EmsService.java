@@ -51,7 +51,7 @@ public class EmsService {
     private EmailDTO convertToEmailDTO(Email email){
         EmailDTO emailDTO = new EmailDTO();
         emailDTO.setId(email.getId());
-        emailDTO.setTo(email.getRecieverEmailId());
+        emailDTO.setReceiverEmailId(email.getReceiverEmailId());
         emailDTO.setSubject(email.getSubject());
         emailDTO.setBody(email.getBody());
         emailDTO.setClientId(email.getClientId());
@@ -61,7 +61,7 @@ public class EmsService {
     private Email converToEmail(EmailDTO emailDTO){
         Email email = new Email();
         email.setId(emailDTO.getId());
-        email.setRecieverEmailId(emailDTO.getTo());
+        email.setReceiverEmailId(emailDTO.getReceiverEmailId());
         email.setSubject(emailDTO.getSubject());
         email.setBody(emailDTO.getBody());
         email.setClientId(emailDTO.getClientId());
