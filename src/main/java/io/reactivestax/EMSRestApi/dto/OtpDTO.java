@@ -22,7 +22,6 @@ public class OtpDTO {
     private Integer validationRetryCount;
     private Boolean isValid;
     private String phone;
-    @Email(message = "Email must be valid email")
     private String email;
     @NotNull(message = "Client Id is needed")
     private Long clientId;

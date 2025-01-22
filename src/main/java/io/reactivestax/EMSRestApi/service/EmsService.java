@@ -8,6 +8,8 @@ import io.reactivestax.EMSRestApi.domain.Sms;
 import io.reactivestax.EMSRestApi.dto.EmailDTO;
 import io.reactivestax.EMSRestApi.dto.PhoneDTO;
 import io.reactivestax.EMSRestApi.dto.SmsDTO;
+import io.reactivestax.EMSRestApi.enums.Status;
+import io.reactivestax.EMSRestApi.exception.InvalidOTPException;
 import io.reactivestax.EMSRestApi.repository.ClientRepository;
 import io.reactivestax.EMSRestApi.repository.EmailRepository;
 import io.reactivestax.EMSRestApi.repository.PhoneRepository;
@@ -30,18 +32,30 @@ public class EmsService {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Autowired
+    private OTPService otpService;
+
 
     public EmailDTO saveEmail(EmailDTO emailDTO){
+        if(!otpService.statusForOTP(emailDTO.getClientId()).equals(Status.VALID)) {
+           throw  new InvalidOTPException("OTP is not valid");
+        }
         Email email = converToEmail(emailDTO);
         return convertToEmailDTO(emailRepository.save(email));
     }
 
     public PhoneDTO savePhone(PhoneDTO phoneDTO){
+        if(!otpService.statusForOTP(phoneDTO.getClientId()).equals(Status.VALID)) {
+            throw  new InvalidOTPException("OTP is not valid");
+        }
         Phone phone = converToPhone(phoneDTO);
         return convertToPhoneDTO(phoneRepository.save(phone));
     }
 
     public SmsDTO saveSms(SmsDTO smsDTO){
+        if(!otpService.statusForOTP(smsDTO.getClientId()).equals(Status.VALID)) {
+            throw  new InvalidOTPException("OTP is not valid");
+        }
         Sms sms = converToSms(smsDTO);
         return convertToSmsDTO(smsRepository.save(sms));
     }
@@ -101,11 +115,6 @@ public class EmsService {
         sms.setMessage(smsDTO.getMessage());
         sms.setClientId(smsDTO.getClientId());
         return sms;
-    }
-
-    private Client fetchClientById(Long clientId){
-        return clientRepository.findById(clientId)
-                .orElseThrow(() -> new RuntimeException("Client not found"));
     }
 
 }

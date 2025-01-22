@@ -18,3 +18,5 @@ otp:
   max-verification-attempts: 3
   block-time-hours: 8
   verification-block-time-hours: 2
+queue:
+  name: ems-queue

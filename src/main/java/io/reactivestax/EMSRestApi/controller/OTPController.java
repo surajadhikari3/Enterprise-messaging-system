@@ -1,6 +1,7 @@
 package io.reactivestax.EMSRestApi.controller;
 
 import io.reactivestax.EMSRestApi.dto.OtpDTO;
+import io.reactivestax.EMSRestApi.enums.Status;
 import io.reactivestax.EMSRestApi.service.OTPService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class OTPController {
     }
 
     @GetMapping("/status/{clientId}")
-    public ResponseEntity<OtpDTO> statusForOTP(@Valid @PathVariable Long clientId) {
+    public ResponseEntity<Status> statusForOTP(@Valid @PathVariable Long clientId) {
         return ResponseEntity.ok(otpService.statusForOTP(clientId));
     }
 
