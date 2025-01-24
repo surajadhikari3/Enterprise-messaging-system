@@ -29,9 +29,6 @@ public class Otp {
     private String email;
     private Boolean isLocked;
 
-    //    @OneToOne(mappedBy = "otp", cascade = CascadeType.ALL)
-//    @JsonBackReference
-//    @ToString.Exclude
     @Column(name = "client_id")
     private Long clientId;
 }
