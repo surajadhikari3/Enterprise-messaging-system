@@ -25,6 +25,7 @@ public class OtpDTO {
     private Status verificationStatus;
     private String phone;
     private String email;
+    private Boolean isLocked;
     @NotNull(message = "Client Id is needed")
     private Long clientId;
 }

@@ -2,7 +2,6 @@ package io.reactivestax.EMSRestApi.service;
 
 import io.reactivestax.EMSRestApi.domain.Client;
 import io.reactivestax.EMSRestApi.domain.Contact;
-import io.reactivestax.EMSRestApi.domain.Otp;
 import io.reactivestax.EMSRestApi.dto.ClientDTO;
 import io.reactivestax.EMSRestApi.repository.ClientRepository;
 import io.reactivestax.EMSRestApi.repository.ContactRepository;
@@ -55,8 +54,6 @@ public class ClientService {
                 .lastName(client.getLastName())
                 .address(client.getAddress())
                 .dateOfBirth(client.getDateOfBirth())
-                .isLocked(client.getIsLocked())
-                .otpId(client.getOtp().getId())
                 .contactId(client.getContacts().stream().map(Contact::getId).collect(Collectors.toList()))
                 .build();
 
@@ -71,8 +68,6 @@ public class ClientService {
                 .address(clientDTO.getAddress())
                 .dateOfBirth(clientDTO.getDateOfBirth())
                 .contacts(fetchContactById(clientDTO.getContactId()))
-                .otp(fetchOtpById(clientDTO.getOtpId()))
-                .isLocked(clientDTO.getIsLocked())
                 .build();
     }
 
@@ -81,9 +76,5 @@ public class ClientService {
         return contactRepository.findAllById(contactIds);
     }
 
-    private Otp fetchOtpById(Long otpId) {
-        return otpRepository.findById(otpId)
-                .orElseThrow(() -> new RuntimeException("OTP not found"));
-    }
 
 }

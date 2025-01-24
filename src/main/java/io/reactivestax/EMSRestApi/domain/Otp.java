@@ -1,6 +1,5 @@
 package io.reactivestax.EMSRestApi.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.reactivestax.EMSRestApi.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,9 +27,11 @@ public class Otp {
     private Status verificationStatus;
     private String phone;
     private String email;
+    private Boolean isLocked;
 
-    @OneToOne(mappedBy = "otp", cascade = CascadeType.ALL)
-    @JsonBackReference
-    @ToString.Exclude
-    private Client client;
+    //    @OneToOne(mappedBy = "otp", cascade = CascadeType.ALL)
+//    @JsonBackReference
+//    @ToString.Exclude
+    @Column(name = "client_id")
+    private Long clientId;
 }

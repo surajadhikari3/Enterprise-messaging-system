@@ -23,7 +23,6 @@ public class Client {
     private String lastName;
     private String dateOfBirth;
     private String address;
-    private Boolean isLocked;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     @JsonBackReference
@@ -31,9 +30,9 @@ public class Client {
     private List<Contact> contacts = new ArrayList<>();
 
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "otp_id", referencedColumnName = "id")
-    @JsonManagedReference
-    @ToString.Exclude
-    private Otp otp;
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "otp_id", referencedColumnName = "id")
+//    @JsonManagedReference
+//    @ToString.Exclude
+//    private Otp otp;
 }

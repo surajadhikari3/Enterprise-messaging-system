@@ -64,17 +64,16 @@ public class OTPService {
     }
 
     private OtpDTO createOtp(OtpDTO otpDTO, String type) {
-        Client client = clientRepository.findById(otpDTO.getClientId()).orElseThrow(() -> new RuntimeException("Client not found"));
-        Otp otp = client.getOtp();
+        Otp otp = otpRepository.findOtpByClientId(otpDTO.getClientId());
 
         //checking the OTP is brand new or not and  OTP generation limits
         if (otp != null && otp.getGenerationRetryCount() >= maxOtpGenerationAttempts) {
-            client.setIsLocked(true);
+            otp.setIsLocked(true);
             if (otp.getCreatedAt().plusHours(otpBlockTimeHours).isAfter(LocalDateTime.now())) {
                 throw new ExceededGenerationException("Max OTP generation attempts reached. Try again later.");
             } else {
                 otp.setGenerationRetryCount(0);
-                client.setIsLocked(false);
+                otp.setIsLocked(false);
             }
         }
 
@@ -82,12 +81,12 @@ public class OTPService {
             otp = new Otp();
             otp.setPhone(otpDTO.getPhone());
             otp.setEmail(otpDTO.getEmail());
-            otp.setClient(client);
             otp.setValidOtp(generateRandomOtp());
             otp.setOtpStatus(Status.VALID);
             otp.setVerificationStatus(Status.PENDING);
             otp.setCreatedAt(LocalDateTime.now());
             otp.setLastAccessed(LocalDateTime.now());
+            otp.setClientId(otpDTO.getClientId());
         } else {
             //logic to check if the otp is expired....
             if (otp.getCreatedAt().plusMinutes(2).isBefore(LocalDateTime.now())) { // since the validity of the otp is 2 minutes..
@@ -100,23 +99,20 @@ public class OTPService {
             }
         }
         otp.setGenerationRetryCount(otp.getGenerationRetryCount() + 1);
-        client.setOtp(otp);
-        clientRepository.save(client);
         otpRepository.save(otp);
         artemisProducer.sendMessage(queueName, String.valueOf(otp.getId()), type); //publishing the otp..
         return convertToOtpDTO(otp);
     }
 
     public OtpDTO verifyOtp(OtpDTO otpDTO) {
-        Client client = clientRepository.findById(otpDTO.getClientId()).orElseThrow(() -> new RuntimeException("Client not found"));
-        Otp otp = client.getOtp();
+        Otp otp = otpRepository.findOtpByClientId(otpDTO.getClientId());
         if (otp == null || otp.getOtpStatus().equals(Status.INVALID) || otp.getValidOtp() == null || !otp.getValidOtp().equals(otpDTO.getValidOtp())) {
             if (otp != null) {
                 otp.setValidationRetryCount(otp.getValidationRetryCount() + 1);
                 otpRepository.save(otp);
             }
             if (otp != null && otp.getValidationRetryCount() >= maxVerificationAttempts) {
-                handleVerificationBlocking(client);
+                handleVerificationBlocking(otp);
             }
             throw new InvalidOTPException("Invalid OTP");
         }
@@ -129,9 +125,8 @@ public class OTPService {
 
 
     public Status statusForOTP(Long clientId) {
-        Client client = clientRepository.findById(clientId).orElseThrow(() -> new RuntimeException("Client not found"));
-        Otp otp = client.getOtp();
-        if (otp != null && otp.getValidationRetryCount() >= maxVerificationAttempts && handleVerificationBlocking(client)) {
+        Otp otp = otpRepository.findOtpByClientId(clientId);
+        if (otp != null && otp.getValidationRetryCount() >= maxVerificationAttempts && handleVerificationBlocking(otp)) {
             return Status.INVALID;
         }
         assert otp != null;
@@ -141,15 +136,15 @@ public class OTPService {
         return Status.VALID;
     }
 
-    private boolean handleVerificationBlocking(Client client) {
-        LocalDateTime lastAccessed = client.getOtp().getLastAccessed();
+    private boolean handleVerificationBlocking(Otp otp) {
+        LocalDateTime lastAccessed = otp.getLastAccessed();
         if (lastAccessed != null && ChronoUnit.HOURS.between(lastAccessed, LocalDateTime.now()) < verificationBlockTimeHours) {
-            client.setIsLocked(true);
-            clientRepository.save(client);
+            otp.setIsLocked(true);
+            otpRepository.save(otp);
             return true;
         }
-        client.setIsLocked(false);
-        clientRepository.save(client);
+        otp.setIsLocked(false);
+        otpRepository.save(otp);
         return false;
     }
 
@@ -167,7 +162,25 @@ public class OTPService {
                 .validOtp(otp.getValidOtp())
                 .phone(otp.getPhone())
                 .email(otp.getEmail())
-                .clientId(otp.getClient() != null ? otp.getClient().getId() : null)
+                .isLocked(otp.getIsLocked())
+                .build();
+    }
+
+    private Otp convertToOtp(OtpDTO otp) {
+        return Otp
+                .builder()
+                .id(otp.getOtpId())
+                .validOtp(otp.getValidOtp())
+                .createdAt(otp.getCreatedAt())
+                .lastAccessed(otp.getLastAccessed())
+                .generationRetryCount(otp.getGenerationRetryCount())
+                .verificationStatus(otp.getVerificationStatus())
+                .validationRetryCount(otp.getValidationRetryCount())
+                .otpStatus(otp.getOtpStatus())
+                .validOtp(otp.getValidOtp())
+                .phone(otp.getPhone())
+                .email(otp.getEmail())
+                .isLocked(otp.getIsLocked())
                 .build();
     }
 
