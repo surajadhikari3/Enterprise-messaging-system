@@ -1,6 +1,7 @@
 package io.reactivestax.EMSRestApi.service;
 
 //import io.reactivestax.EMSRestApi.domain.Client;
+
 import io.reactivestax.EMSRestApi.domain.Client;
 import io.reactivestax.EMSRestApi.domain.Email;
 import io.reactivestax.EMSRestApi.domain.Phone;
@@ -15,6 +16,7 @@ import io.reactivestax.EMSRestApi.repository.EmailRepository;
 import io.reactivestax.EMSRestApi.repository.PhoneRepository;
 import io.reactivestax.EMSRestApi.repository.SmsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,31 +38,22 @@ public class EmsService {
     private OTPService otpService;
 
 
-    public EmailDTO saveEmail(EmailDTO emailDTO){
-        if(!otpService.statusForOTP(emailDTO.getClientId()).equals(Status.VALID)) {
-           throw  new InvalidOTPException("Not valid OTP");
-        }
+    public EmailDTO saveEmail(EmailDTO emailDTO) {
         Email email = converToEmail(emailDTO);
         return convertToEmailDTO(emailRepository.save(email));
     }
 
-    public PhoneDTO savePhone(PhoneDTO phoneDTO){
-        if(!otpService.statusForOTP(phoneDTO.getClientId()).equals(Status.VALID)) {
-            throw  new InvalidOTPException("OTP is not valid");
-        }
+    public PhoneDTO savePhone(PhoneDTO phoneDTO) {
         Phone phone = converToPhone(phoneDTO);
         return convertToPhoneDTO(phoneRepository.save(phone));
     }
 
-    public SmsDTO saveSms(SmsDTO smsDTO){
-        if(!otpService.statusForOTP(smsDTO.getClientId()).equals(Status.VALID)) {
-            throw  new InvalidOTPException("OTP is not valid");
-        }
+    public SmsDTO saveSms(SmsDTO smsDTO) {
         Sms sms = converToSms(smsDTO);
         return convertToSmsDTO(smsRepository.save(sms));
     }
 
-    private EmailDTO convertToEmailDTO(Email email){
+    private EmailDTO convertToEmailDTO(Email email) {
         EmailDTO emailDTO = new EmailDTO();
         emailDTO.setId(email.getId());
         emailDTO.setReceiverEmailId(email.getReceiverEmailId());
@@ -70,7 +63,7 @@ public class EmsService {
         return emailDTO;
     }
 
-    private Email converToEmail(EmailDTO emailDTO){
+    private Email converToEmail(EmailDTO emailDTO) {
         Email email = new Email();
         email.setId(emailDTO.getId());
         email.setReceiverEmailId(emailDTO.getReceiverEmailId());
@@ -80,7 +73,7 @@ public class EmsService {
         return email;
     }
 
-    private PhoneDTO convertToPhoneDTO(Phone phone){
+    private PhoneDTO convertToPhoneDTO(Phone phone) {
         PhoneDTO phoneDTO = new PhoneDTO();
         phoneDTO.setId(phone.getId());
         phoneDTO.setOutgoingPhoneNumber(phone.getOutgoingPhoneNumber());
@@ -88,7 +81,7 @@ public class EmsService {
         return phoneDTO;
     }
 
-    private Phone converToPhone(PhoneDTO phoneDTO){
+    private Phone converToPhone(PhoneDTO phoneDTO) {
         Phone phone = new Phone();
         phone.setId(phoneDTO.getId());
         phone.setOutgoingPhoneNumber(phoneDTO.getOutgoingPhoneNumber());
@@ -97,7 +90,7 @@ public class EmsService {
     }
 
 
-    private SmsDTO convertToSmsDTO(Sms sms){
+    private SmsDTO convertToSmsDTO(Sms sms) {
         SmsDTO smsDTO = new SmsDTO();
         smsDTO.setId(sms.getId());
         smsDTO.setPhone(sms.getPhone());
@@ -106,7 +99,7 @@ public class EmsService {
         return smsDTO;
     }
 
-    private Sms converToSms(SmsDTO smsDTO){
+    private Sms converToSms(SmsDTO smsDTO) {
         Sms sms = new Sms();
         sms.setId(smsDTO.getId());
         sms.setPhone(smsDTO.getPhone());

@@ -1,6 +1,7 @@
 package io.reactivestax.EMSRestApi.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import io.reactivestax.EMSRestApi.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,7 +21,11 @@ public class Otp {
     private LocalDateTime lastAccessed;
     private Integer generationRetryCount = 0;
     private Integer validationRetryCount = 0;
-    private Boolean isValid;
+
+    @Enumerated(EnumType.STRING)
+    private Status otpStatus;
+    @Enumerated(EnumType.STRING)
+    private Status verificationStatus;
     private String phone;
     private String email;
 

@@ -1,5 +1,6 @@
 package io.reactivestax.EMSRestApi.dto;
 
+import io.reactivestax.EMSRestApi.enums.Status;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
@@ -20,7 +21,8 @@ public class OtpDTO {
     private Integer generationRetryCount;
     @Max(value = 3, message = "Max attempt for OTP validation is 3")
     private Integer validationRetryCount;
-    private Boolean isValid;
+    private Status otpStatus;
+    private Status verificationStatus;
     private String phone;
     private String email;
     @NotNull(message = "Client Id is needed")
