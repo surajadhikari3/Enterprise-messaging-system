@@ -36,19 +36,19 @@ public class OTPService {
 
 
     @Value("${otp.max-otp-generation-attempts}")
-    private int maxOtpGenerationAttempts;
+    int maxOtpGenerationAttempts;
 
     @Value("${otp.max-verification-attempts}")
     private int maxVerificationAttempts;
 
     @Value("${otp.sliding-window-hours}")
-    private int slidingWindowHours;
+    int slidingWindowHours;
 
     @Value("${otp.verification-block-time-hours}")
     private int verificationBlockTimeHours;
 
     @Value("${queue.name}")
-    private String queueName;
+    String queueName;
 
 
     public OtpDTO createOtpForSms(OtpDTO otpDTO) {
@@ -148,6 +148,7 @@ public class OTPService {
                 .generationTimeStamps(otp.getGenerationTimeStamps())
                 .otpStatus(otp.getOtpStatus())
                 .validOtp(otp.getValidOtp())
+                .clientId(otp.getClientId())
                 .phone(otp.getPhone())
                 .email(otp.getEmail())
                 .isLocked(otp.getIsLocked())

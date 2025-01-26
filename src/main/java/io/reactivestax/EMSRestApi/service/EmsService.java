@@ -1,22 +1,16 @@
 package io.reactivestax.EMSRestApi.service;
 
-//import io.reactivestax.EMSRestApi.domain.Client;
-
-import io.reactivestax.EMSRestApi.domain.Client;
 import io.reactivestax.EMSRestApi.domain.Email;
 import io.reactivestax.EMSRestApi.domain.Phone;
 import io.reactivestax.EMSRestApi.domain.Sms;
 import io.reactivestax.EMSRestApi.dto.EmailDTO;
 import io.reactivestax.EMSRestApi.dto.PhoneDTO;
 import io.reactivestax.EMSRestApi.dto.SmsDTO;
-import io.reactivestax.EMSRestApi.enums.Status;
-import io.reactivestax.EMSRestApi.exception.InvalidOTPException;
 import io.reactivestax.EMSRestApi.repository.ClientRepository;
 import io.reactivestax.EMSRestApi.repository.EmailRepository;
 import io.reactivestax.EMSRestApi.repository.PhoneRepository;
 import io.reactivestax.EMSRestApi.repository.SmsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -77,7 +71,7 @@ public class EmsService {
         PhoneDTO phoneDTO = new PhoneDTO();
         phoneDTO.setId(phone.getId());
         phoneDTO.setOutgoingPhoneNumber(phone.getOutgoingPhoneNumber());
-        phoneDTO.setClientId(phone.getId());
+        phoneDTO.setClientId(phone.getClientId());
         return phoneDTO;
     }
 
@@ -94,8 +88,8 @@ public class EmsService {
         SmsDTO smsDTO = new SmsDTO();
         smsDTO.setId(sms.getId());
         smsDTO.setPhone(sms.getPhone());
-        smsDTO.setMessage(smsDTO.getPhone());
-        smsDTO.setClientId(sms.getId());
+        smsDTO.setMessage(sms.getMessage());
+        smsDTO.setClientId(sms.getClientId());
         return smsDTO;
     }
 
