@@ -26,7 +26,6 @@ public class EmsController {
 
     String QUEUE_NAME = "ems-queue";
 
-
     @PostMapping("/email")
     public ResponseEntity<EmailDTO> createEmail(@Valid @RequestBody EmailDTO emailDTO) {
         EmailDTO savedDTO = emsService.saveEmail(emailDTO);

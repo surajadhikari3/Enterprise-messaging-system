@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
@@ -17,6 +19,9 @@ public class OtpDTO {
     private String validOtp;
     private LocalDateTime createdAt;
     private LocalDateTime lastAccessed;
+
+    private List<LocalDateTime> generationTimeStamps = new ArrayList<>();
+
     @Max(value = 5, message = "Max attempt for OTP generation is 5")
     private Integer generationRetryCount;
     @Max(value = 3, message = "Max attempt for OTP validation is 3")

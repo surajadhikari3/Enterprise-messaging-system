@@ -1,12 +1,10 @@
 package io.reactivestax.EMSRestApi.service;
 
 
-import io.reactivestax.EMSRestApi.domain.Client;
 import io.reactivestax.EMSRestApi.domain.Otp;
 import io.reactivestax.EMSRestApi.dto.OtpDTO;
 import io.reactivestax.EMSRestApi.enums.Status;
 import io.reactivestax.EMSRestApi.exception.ExceededGenerationException;
-import io.reactivestax.EMSRestApi.exception.ExceededValidationException;
 import io.reactivestax.EMSRestApi.exception.InvalidOTPException;
 import io.reactivestax.EMSRestApi.message_broker.ArtemisProducer;
 import io.reactivestax.EMSRestApi.repository.ClientRepository;
@@ -17,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -41,8 +40,8 @@ public class OTPService {
     @Value("${otp.max-verification-attempts}")
     private int maxVerificationAttempts;
 
-    @Value("${otp.block-time-hours}")
-    private int otpBlockTimeHours;
+    @Value("${otp.sliding-window-hours}")
+    private int slidingWindowHours;
 
     @Value("${otp.verification-block-time-hours}")
     private int verificationBlockTimeHours;
@@ -66,39 +65,30 @@ public class OTPService {
     private OtpDTO createOtp(OtpDTO otpDTO, String type) {
         Otp otp = otpRepository.findOtpByClientId(otpDTO.getClientId());
 
-        //checking the OTP is brand new or not and  OTP generation limits
-        if (otp != null && otp.getGenerationRetryCount() >= maxOtpGenerationAttempts) {
-            otp.setIsLocked(true);
-            if (otp.getCreatedAt().plusHours(otpBlockTimeHours).isAfter(LocalDateTime.now())) {
-                throw new ExceededGenerationException("Max OTP generation attempts reached. Try again later.");
-            } else {
-                otp.setGenerationRetryCount(0);
-                otp.setIsLocked(false);
-            }
-        }
-
         if (otp == null) {
             otp = new Otp();
             otp.setPhone(otpDTO.getPhone());
             otp.setEmail(otpDTO.getEmail());
-            otp.setValidOtp(generateRandomOtp());
-            otp.setOtpStatus(Status.VALID);
-            otp.setVerificationStatus(Status.PENDING);
-            otp.setCreatedAt(LocalDateTime.now());
-            otp.setLastAccessed(LocalDateTime.now());
             otp.setClientId(otpDTO.getClientId());
-        } else {
-            //logic to check if the otp is expired....
-            if (otp.getCreatedAt().plusMinutes(2).isBefore(LocalDateTime.now())) { // since the validity of the otp is 2 minutes..
-                otp.setValidOtp(generateRandomOtp());  // New OTP
-                otp.setOtpStatus(Status.VALID);
-                otp.setCreatedAt(LocalDateTime.now()); // Reset creation time
-                otp.setLastAccessed(LocalDateTime.now());
-            } else {
-                otp.setLastAccessed(LocalDateTime.now());
-            }
+            otp.setGenerationTimeStamps(new ArrayList<>());
         }
+
+        LocalDateTime slidingWindowStart = LocalDateTime.now().minusHours(slidingWindowHours);
+
+        otp.getGenerationTimeStamps().removeIf(timeStamp -> timeStamp.isBefore(slidingWindowStart));
+
+        if (otp.getGenerationTimeStamps().size() >= maxOtpGenerationAttempts) {
+                otp.setIsLocked(true);
+                throw new ExceededGenerationException("Max OTP generation attempts reached. Try again later.");
+        }
+        otp.setIsLocked(false);
+        otp.setValidOtp(generateRandomOtp());
+        otp.setOtpStatus(Status.VALID);
+        otp.setVerificationStatus(Status.PENDING);
+        otp.setCreatedAt(LocalDateTime.now());
+        otp.setLastAccessed(LocalDateTime.now());
         otp.setGenerationRetryCount(otp.getGenerationRetryCount() + 1);
+        otp.getGenerationTimeStamps().add(LocalDateTime.now());
         otpRepository.save(otp);
         artemisProducer.sendMessage(queueName, String.valueOf(otp.getId()), type); //publishing the otp..
         return convertToOtpDTO(otp);
@@ -158,6 +148,7 @@ public class OTPService {
                 .generationRetryCount(otp.getGenerationRetryCount())
                 .verificationStatus(otp.getVerificationStatus())
                 .validationRetryCount(otp.getValidationRetryCount())
+                .generationTimeStamps(otp.getGenerationTimeStamps())
                 .otpStatus(otp.getOtpStatus())
                 .validOtp(otp.getValidOtp())
                 .phone(otp.getPhone())
@@ -166,23 +157,6 @@ public class OTPService {
                 .build();
     }
 
-    private Otp convertToOtp(OtpDTO otp) {
-        return Otp
-                .builder()
-                .id(otp.getOtpId())
-                .validOtp(otp.getValidOtp())
-                .createdAt(otp.getCreatedAt())
-                .lastAccessed(otp.getLastAccessed())
-                .generationRetryCount(otp.getGenerationRetryCount())
-                .verificationStatus(otp.getVerificationStatus())
-                .validationRetryCount(otp.getValidationRetryCount())
-                .otpStatus(otp.getOtpStatus())
-                .validOtp(otp.getValidOtp())
-                .phone(otp.getPhone())
-                .email(otp.getEmail())
-                .isLocked(otp.getIsLocked())
-                .build();
-    }
 
     private String generateRandomOtp() {
         return String.valueOf(ThreadLocalRandom.current().nextInt(0, 1000000));

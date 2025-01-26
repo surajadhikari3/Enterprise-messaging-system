@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -17,6 +19,9 @@ public class Otp {
     private Long id;
     private String validOtp;
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    private List<LocalDateTime> generationTimeStamps = new ArrayList<>();
+
     private LocalDateTime lastAccessed;
     private Integer generationRetryCount = 0;
     private Integer validationRetryCount = 0;
