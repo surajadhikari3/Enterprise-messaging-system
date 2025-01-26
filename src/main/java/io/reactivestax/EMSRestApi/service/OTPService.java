@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -86,8 +87,6 @@ public class OTPService {
         otp.setOtpStatus(Status.VALID);
         otp.setVerificationStatus(Status.PENDING);
         otp.setCreatedAt(LocalDateTime.now());
-        otp.setLastAccessed(LocalDateTime.now());
-        otp.setGenerationRetryCount(otp.getGenerationRetryCount() + 1);
         otp.getGenerationTimeStamps().add(LocalDateTime.now());
         otpRepository.save(otp);
         artemisProducer.sendMessage(queueName, String.valueOf(otp.getId()), type); //publishing the otp..
@@ -108,7 +107,6 @@ public class OTPService {
         }
         otp.setVerificationStatus(Status.VERIFIED);
         otp.setValidationRetryCount(0);
-        otp.setGenerationRetryCount(0);
         otpRepository.save(otp);
         return convertToOtpDTO(otp);
     }
@@ -116,18 +114,19 @@ public class OTPService {
 
     public Status statusForOTP(Long clientId) {
         Otp otp = otpRepository.findOtpByClientId(clientId);
-        if (otp != null && otp.getValidationRetryCount() >= maxVerificationAttempts && handleVerificationBlocking(otp)) {
+        if (otp != null && otp.getValidationRetryCount() >= maxVerificationAttempts && handleVerificationBlocking(otp))  {
             return Status.INVALID;
         }
         assert otp != null;
-        if (otp.getLastAccessed().plusMinutes(2).isBefore(LocalDateTime.now())) {
+        LocalDateTime lastAccessed =getLastValidElement(otp.getGenerationTimeStamps());
+        if (lastAccessed.plusMinutes(2).isBefore(LocalDateTime.now())) {
             return Status.EXPIRED;
         }
         return Status.VALID;
     }
 
     private boolean handleVerificationBlocking(Otp otp) {
-        LocalDateTime lastAccessed = otp.getLastAccessed();
+        LocalDateTime lastAccessed =getLastValidElement(otp.getGenerationTimeStamps());
         if (lastAccessed != null && ChronoUnit.HOURS.between(lastAccessed, LocalDateTime.now()) < verificationBlockTimeHours) {
             otp.setIsLocked(true);
             otpRepository.save(otp);
@@ -144,8 +143,6 @@ public class OTPService {
                 .otpId(otp.getId())
                 .validOtp(otp.getValidOtp())
                 .createdAt(otp.getCreatedAt())
-                .lastAccessed(otp.getLastAccessed())
-                .generationRetryCount(otp.getGenerationRetryCount())
                 .verificationStatus(otp.getVerificationStatus())
                 .validationRetryCount(otp.getValidationRetryCount())
                 .generationTimeStamps(otp.getGenerationTimeStamps())
@@ -161,4 +158,15 @@ public class OTPService {
     private String generateRandomOtp() {
         return String.valueOf(ThreadLocalRandom.current().nextInt(0, 1000000));
     }
+
+    public static <T> T getLastValidElement(List<T> array) {
+        for (int i = array.size() - 1; i >= 0; i--) {
+            if (array.get(i) != null) { // Assuming 0 is the default value
+                return array.get(i);
+            }
+        }
+        throw new IllegalArgumentException("No valid elements found");
+    }
+
+
 }

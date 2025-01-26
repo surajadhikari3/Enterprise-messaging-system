@@ -21,13 +21,10 @@ public class Otp {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     private List<LocalDateTime> generationTimeStamps = new ArrayList<>();
-
-    private LocalDateTime lastAccessed;
-    private Integer generationRetryCount = 0;
     private Integer validationRetryCount = 0;
-
     @Enumerated(EnumType.STRING)
     private Status otpStatus;
+
     @Enumerated(EnumType.STRING)
     private Status verificationStatus;
     private String phone;
