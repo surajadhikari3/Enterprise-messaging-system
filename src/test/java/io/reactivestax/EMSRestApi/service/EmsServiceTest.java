@@ -21,7 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
-@ActiveProfiles("test")
 class EmsServiceTest {
 
     @Autowired
@@ -69,7 +68,6 @@ class EmsServiceTest {
 
     @Test
     void testSavePhone() {
-        // Arrange
         PhoneDTO phoneDTO = new PhoneDTO();
         phoneDTO.setId(2L);
         phoneDTO.setOutgoingPhoneNumber("+1234567890");
