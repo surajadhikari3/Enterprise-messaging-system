@@ -1,0 +1,33 @@
+spring:
+  profiles: test
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ems_test_db
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+#  datasource:
+#    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+#    driverClassName: org.h2.Driver
+#    username: sa
+#    password: password
+#    hikari:
+#      maximum-pool-size: 5
+#  jpa:
+#    database-platform: org.hibernate.dialect.H2Dialect
+#    hibernate:
+#      ddl-auto: create-drop
+#    show-sql: true
+#  jackson:
+#    serialization:
+#      fail-on-empty-beans: false
+logging:
+  level:
+    org.springframework: DEBUG
+    io.reactivestax: TRACE
+
+
+
+#
