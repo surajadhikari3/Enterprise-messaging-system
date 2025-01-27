@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Sms {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
