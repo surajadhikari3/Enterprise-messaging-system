@@ -68,8 +68,6 @@ public class OTPService {
 
         if (otp == null) {
             otp = new Otp();
-            otp.setPhone(otpDTO.getPhone());
-            otp.setEmail(otpDTO.getEmail());
             otp.setClientId(otpDTO.getClientId());
             otp.setGenerationTimeStamps(new ArrayList<>());
         }
@@ -79,9 +77,11 @@ public class OTPService {
         otp.getGenerationTimeStamps().removeIf(timeStamp -> timeStamp.isBefore(slidingWindowStart));
 
         if (otp.getGenerationTimeStamps().size() >= maxOtpGenerationAttempts) {
-                otp.setIsLocked(true);
-                throw new ExceededGenerationException("Max OTP generation attempts reached. Try again later.");
+            otp.setIsLocked(true);
+            throw new ExceededGenerationException("Max OTP generation attempts reached. Try again later.");
         }
+        otp.setPhone(otpDTO.getPhone());
+        otp.setEmail(otpDTO.getEmail());
         otp.setIsLocked(false);
         otp.setValidOtp(generateRandomOtp());
         otp.setOtpStatus(Status.VALID);
@@ -114,11 +114,11 @@ public class OTPService {
 
     public Status statusForOTP(Long clientId) {
         Otp otp = otpRepository.findOtpByClientId(clientId);
-        if (otp != null && otp.getValidationRetryCount() >= maxVerificationAttempts && handleVerificationBlocking(otp))  {
+        if (otp != null && otp.getValidationRetryCount() >= maxVerificationAttempts && handleVerificationBlocking(otp)) {
             return Status.INVALID;
         }
         assert otp != null;
-        LocalDateTime lastAccessed =getLastValidElement(otp.getGenerationTimeStamps());
+        LocalDateTime lastAccessed = getLastValidElement(otp.getGenerationTimeStamps());
         if (lastAccessed.plusMinutes(2).isBefore(LocalDateTime.now())) {
             return Status.EXPIRED;
         }
@@ -126,7 +126,7 @@ public class OTPService {
     }
 
     private boolean handleVerificationBlocking(Otp otp) {
-        LocalDateTime lastAccessed =getLastValidElement(otp.getGenerationTimeStamps());
+        LocalDateTime lastAccessed = getLastValidElement(otp.getGenerationTimeStamps());
         if (lastAccessed != null && ChronoUnit.HOURS.between(lastAccessed, LocalDateTime.now()) < verificationBlockTimeHours) {
             otp.setIsLocked(true);
             otpRepository.save(otp);

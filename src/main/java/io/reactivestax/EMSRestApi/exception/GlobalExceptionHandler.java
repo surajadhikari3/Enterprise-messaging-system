@@ -40,16 +40,4 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    // Handle unsupported media type exceptions
-    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public ResponseEntity<Map<String, Object>> handleHttpMediaTypeNotSupported(
-            HttpMediaTypeNotSupportedException ex, WebRequest request) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.UNSUPPORTED_MEDIA_TYPE.value());
-        body.put("error", "Unsupported Media Type");
-        body.put("message", ex.getMessage());
-        body.put("path", request.getDescription(false).replace("uri=", ""));
-        return new ResponseEntity<>(body, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
-    }
 }
