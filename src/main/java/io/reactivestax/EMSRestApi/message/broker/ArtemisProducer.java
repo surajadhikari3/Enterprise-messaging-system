@@ -1,4 +1,4 @@
-package io.reactivestax.EMSRestApi.message_broker;
+package io.reactivestax.EMSRestApi.message.broker;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
